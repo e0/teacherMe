@@ -1,7 +1,69 @@
 <!doctype html>
 
-<script src="js/mithril.min.js"></script>
+<script src="js/mithril.js"></script>
 <script>
+  var Course = function(data) {
+    data = data || {};
+    this.id = m.prop(data.id || "");
+    this.title = m.prop(data.title || "");
+    this.description = m.prop(data.description || "");
+    this.discussions = m.prop(data.discussions || []);
+    this.downloads = m.prop(data.downloads || []);
+    this.assignments = m.prop(data.assignments || []);
+    this.teacherName = m.prop(data.teacherName || "");
+    this.studentsCount = m.prop(data.studentsCount || 0);
+  };
+
+  var Discussion = function(data) {
+    data = data || {};
+    this.id = m.prop(data.id || "");
+    this.name = m.prop(data.name || "");
+    this.date = m.prop(data.date || "");
+  };
+
+  var Download = function(data) {
+    data = data || {};
+    this.id = m.prop(data.id || "");
+    this.name = m.prop(data.name || "");
+    this.date = m.prop(data.date || "");
+  };
+
+  var Assignment = function(data) {
+    this.id = m.prop(data.id || "");
+    this.name = m.prop(data.name || "");
+    this.date = m.prop(data.date || "");
+  };
+
+  var firstCourse = new Course({
+    id: 1,
+    title: "Making your first web page",
+    description: "<p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</p><p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>",
+      discussions: [
+        new Discussion({id: 2, name: "second discussion", date: "2015-06-12"}),
+        new Discussion({id: 1, name: "first discussion", date: "2015-06-11"})
+      ],
+      downloads: [
+        new Download({id: 2, name: "Lesson 2", date: "2015-06-12"}),
+        new Download({id: 1, name: "Lesson 1", date: "2015-06-11"})
+      ],
+      assignments: [
+        new Assignment({id: 2, name: "Lesson 2 assignment", date: "2015-06-12"}),
+        new Assignment({id: 1, name: "Lesson 1 assignment", date: "2015-06-11"})
+      ],
+      teacherName: "e0",
+      studentsCount: 42
+  });
+
+  var CoursePage = {
+    controller: function() {
+      this.course = m.prop(firstCourse);
+    },
+    view: function(ctrl) {
+      var course = ctrl.course();
+      return mixinLayout(layout, head, nav, courseBody, course);
+    }
+  };
+
   var layout = function(head, nav, body) {
     return m("html", [
       m("head", head),
@@ -37,39 +99,32 @@
     ]);
   };
 
-  var courseBody = function() {
+  var courseBody = function(course) {
     return [
-      m(".row.course-header", courseHeader()),
-      m(".row.course-contents", courseContents())
+      m(".row.course-header", courseHeader(course)),
+      m(".row.course-contents", courseContents(course))
     ];
   };
 
-  var courseHeader = function() {
+  var courseHeader = function(course) {
     return [
-      m(".nine.columns", [m("h2", "Making your first web page")]),
+      m(".nine.columns", [m("h2", course.title())]),
       m(".three.columns", [m("a.button.button-primary[href='#']", "Join course")])
     ];
   };
 
-  var courseContents = function() {
+  var courseContents = function(course) {
     return [
-      m(".eight.columns.course-description", courseDescription()),
-      m(".four.columns.course-sidebar", courseSidebar())
+      m(".eight.columns.course-description", m.trust(course.description())),
+      m(".four.columns.course-sidebar", courseSidebar(course))
     ];
   };
 
-  var courseDescription = function() {
-    return [
-      m("p", "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc."),
-      m("p", "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).")
-    ];
-  };
-
-  var courseSidebar = function() {
+  var courseSidebar = function(course) {
     return [
       m("h6.teacher", [
         "Teacher: ",
-        m("span", [m("a[href='#']", "e0")])
+        m("span", [m("a[href='#']", course.teacherName())])
       ]),
       m(".box", [
         m("h6", [
@@ -77,16 +132,13 @@
           m("span.view-all-link", [m("a[href='#'", "view all")])
         ]),
         m("ul", [
-            m("li", [
-              m("a[href='#']", "second discussion"),
+          course.discussions().map(function(discussion) {
+            return m("li", [
+              m("a[href='#']", discussion.name()),
               " ",
-              m("span.date", "2015-06-12")
-            ]),
-            m("li", [
-              m("a[href='discussion']", "first discussion"),
-              " ",
-              m("span.date", "2015-06-11")
+              m("span.date", discussion.date())
             ])
+          })
         ])
       ]),
       m(".box", [
@@ -95,16 +147,13 @@
           m("span.view-all-link", [m("a[href='#'", "view all")])
         ]),
         m("ul", [
-            m("li", [
-              m("a[href='#']", "Lesson 2"),
+          course.downloads().map(function(download) {
+            return m("li", [
+              m("a[href='#']", download.name()),
               " ",
-              m("span.date", "2015-06-12")
-            ]),
-            m("li", [
-              m("a[href='#']", "Lesson 1 "),
-              " ",
-              m("span.date", "2015-06-11")
+              m("span.date", download.date())
             ])
+          })
         ])
       ]),
       m(".box", [
@@ -113,34 +162,25 @@
           m("span.view-all-link", [m("a[href='#'", "view all")])
         ]),
         m("ul", [
-            m("li", [
-              m("a[href='#']", "Lesson 2 assignment"),
+          course.assignments().map(function(assignment) {
+            return m("li", [
+              m("a[href='#']", assignment.name()),
               " ",
-              m("span.date", "2015-06-12")
-            ]),
-            m("li", [
-              m("a[href='assignment']", "Lesson 1 assignment"),
-              " ",
-              m("span.date", "2015-06-11")
+              m("span.date", assignment.date())
             ])
+          })
         ])
       ]),
-      m("footer", "There are 42 students taking this course")
+      m("footer", "There are" + course.studentsCount() + " students taking this course")
     ];
   };
 
-  var mixinLayout = function(layout, head, nav, body) {
-    return function() {
-      return layout(head(), nav(), body());
-    };
+  var mixinLayout = function(layout, head, nav, body, bodyData) {
+    return layout(head(), nav(), body(bodyData));
   };
 
-  var courseModule = {};
-  courseModule.controller = function(){};
-  courseModule.view = mixinLayout(layout, head, nav, courseBody);
-
   m.route(document, "/course", {
-    "/course": courseModule
+    "/course": CoursePage
   });
 
 </script>
