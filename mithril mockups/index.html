@@ -1,0 +1,146 @@
+<!doctype html>
+
+<script src="js/mithril.min.js"></script>
+<script>
+  var layout = function(head, nav, body) {
+    return m("html", [
+      m("head", head),
+      m("body", [
+        m("header", nav),
+        m("div.container", body)
+      ]) 
+    ]);
+  };
+
+  var head = function() {
+    return [
+      m("meta[charset='utf-8'"),
+      m("title", "Making your first web page"),
+      m("link[rel='stylesheet'][type='text/css'][href='http://fonts.googleapis.com/css?family=Raleway:400,300,600']"),
+      m("link[rel='stylesheet'][type='text/css'][href='css/normalize.css']"),
+      m("link[rel='stylesheet'][type='text/css'][href='css/skeleton.css']"),
+      m("link[rel='stylesheet'][type='text/css'][href='css/global.css']"),
+      m("link[rel='stylesheet'][type='text/css'][href='css/course.css']")
+    ];
+  };
+
+  var nav = function() {
+    return m("div.container", [
+      m("span#logo.two.columns", "Logo"),
+      m("nav.ten.columns", [
+        m("ul", [
+          m("li", [m("a[href='#']", "Courses")]),
+          m("li", [m("a[href='#']", "Help")]),
+          m("li", [m("a.button.button-green[href='#']", "Log in")])
+        ])
+      ])
+    ]);
+  };
+
+  var courseBody = function() {
+    return [
+      m(".row.course-header", courseHeader()),
+      m(".row.course-contents", courseContents())
+    ];
+  };
+
+  var courseHeader = function() {
+    return [
+      m(".nine.columns", [m("h2", "Making your first web page")]),
+      m(".three.columns", [m("a.button.button-primary[href='#']", "Join course")])
+    ];
+  };
+
+  var courseContents = function() {
+    return [
+      m(".eight.columns.course-description", courseDescription()),
+      m(".four.columns.course-sidebar", courseSidebar())
+    ];
+  };
+
+  var courseDescription = function() {
+    return [
+      m("p", "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc."),
+      m("p", "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).")
+    ];
+  };
+
+  var courseSidebar = function() {
+    return [
+      m("h6.teacher", [
+        "Teacher: ",
+        m("span", [m("a[href='#']", "e0")])
+      ]),
+      m(".box", [
+        m("h6", [
+          "Discussions ",
+          m("span.view-all-link", [m("a[href='#'", "view all")])
+        ]),
+        m("ul", [
+            m("li", [
+              m("a[href='#']", "second discussion"),
+              " ",
+              m("span.date", "2015-06-12")
+            ]),
+            m("li", [
+              m("a[href='discussion']", "first discussion"),
+              " ",
+              m("span.date", "2015-06-11")
+            ])
+        ])
+      ]),
+      m(".box", [
+        m("h6", [
+          "Downloads ",
+          m("span.view-all-link", [m("a[href='#'", "view all")])
+        ]),
+        m("ul", [
+            m("li", [
+              m("a[href='#']", "Lesson 2"),
+              " ",
+              m("span.date", "2015-06-12")
+            ]),
+            m("li", [
+              m("a[href='#']", "Lesson 1 "),
+              " ",
+              m("span.date", "2015-06-11")
+            ])
+        ])
+      ]),
+      m(".box", [
+        m("h6", [
+          "Assignments ",
+          m("span.view-all-link", [m("a[href='#'", "view all")])
+        ]),
+        m("ul", [
+            m("li", [
+              m("a[href='#']", "Lesson 2 assignment"),
+              " ",
+              m("span.date", "2015-06-12")
+            ]),
+            m("li", [
+              m("a[href='assignment']", "Lesson 1 assignment"),
+              " ",
+              m("span.date", "2015-06-11")
+            ])
+        ])
+      ]),
+      m("footer", "There are 42 students taking this course")
+    ];
+  };
+
+  var mixinLayout = function(layout, head, nav, body) {
+    return function() {
+      return layout(head(), nav(), body());
+    };
+  };
+
+  var courseModule = {};
+  courseModule.controller = function(){};
+  courseModule.view = mixinLayout(layout, head, nav, courseBody);
+
+  m.route(document, "/course", {
+    "/course": courseModule
+  });
+
+</script>

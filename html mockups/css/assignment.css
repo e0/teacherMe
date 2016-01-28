@@ -1,0 +1,15 @@
+.un-submitted {
+	color: #888;
+}
+
+.fail {
+	color: #B53310;
+}
+
+.pending {
+	color: #E88B2C;
+}
+
+.pass {
+	color: #10B582;
+}

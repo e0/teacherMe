@@ -1,0 +1,37 @@
+.add-comment-wrapper {
+	border-bottom: 1px dashed #E1E1E1;
+}
+
+.add-comment-wrapper textarea {
+	height: 10rem;
+}
+
+.comment-metadata {
+	font-size: 1.2rem;
+	color: #888;
+	margin-bottom: 1rem;
+}
+
+.reply-link-wrapper {
+	font-size: 1.2rem;
+}
+
+.comment {
+	margin-bottom: -1rem;
+}
+
+.level-zero.comment {
+	margin-top: 3rem;
+}
+
+.level-one.comment {
+	margin-left: 5%;
+}
+
+.level-two.comment {
+	margin-left: 10%;
+}
+
+.comments-wrapper {
+	margin-bottom: 2rem;
+}
