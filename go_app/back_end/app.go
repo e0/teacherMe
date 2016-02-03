@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
-    "encoding/json"
-
+    
 	r "github.com/dancannon/gorethink"
 	"github.com/gin-gonic/gin"
+    "github.com/gin-gonic/contrib/static"
+    "github.com/e0/teacherMe/go_app/back_end/model"
+    "github.com/e0/teacherMe/go_app/back_end/helper"
 )
 
 var session *r.Session
@@ -14,11 +16,25 @@ func main() {
 	connectToDB()
 	// courseId := createCourse()
     // fmt.Println(courseId)
-    fetchCourse("1")
 
-	router := gin.Default()
-	router.Static("/", "./")
-	router.Run(":8081")
+	r := gin.Default()
+
+    r.Use(static.Serve("/", static.LocalFile("../front_end/", true)))
+
+    api := r.Group("/api")
+    {
+        api.GET("/course/:courseId", func(c *gin.Context) {
+            courseId := c.Param("courseId")
+            course, err := fetchCourse(courseId)
+            if err != nil {
+                fmt.Println(err)
+            }
+
+            c.JSON(200, helper.GetJSONFormat(course))
+        })
+    }
+
+	r.Run(":8081")
 }
 
 func connectToDB() {
@@ -63,50 +79,18 @@ func createCourse() string {
 	return result.GeneratedKeys[0]
 }
 
-func fetchCourse(courseId string) {
+func fetchCourse(courseId string) (model.Course, error) {
+    var course model.Course
+
     cursor, err := r.Table("courses").Get(courseId).Run(session)
+
     if err != nil {
         fmt.Println(err)
-        return
+        return course, err
     }
 
-    course := Course{}
     cursor.One(&course)
     cursor.Close()
 
-    fmt.Println(course)
-}
-
-func printObj(v interface{}) {
-    vBytes, _ := json.Marshal(v)
-    fmt.Println(string(vBytes))
-}
-
-type Course struct {
-	Id            string       `gorethink:"id,omitempty"`
-	Title         string       `gorethink:"title"`
-	Description   string       `gorethink:"description"`
-	Discussions   []Discussion `gorethink:"discussions"`
-	Downloads     []Download   `gorethink:"downloads"`
-	Assignments   []Assignment `gorethink:"assignments"`
-	TeacherName   string       `gorethink:"teacherName"`
-	StudentsCount int          `gorethink:"studentsCount"`
-}
-
-type Discussion struct {
-	Id   string `gorethink:"id,omitempty"`
-	Name string `gorethink:"name"`
-	Date string `gorethink:"date"`
-}
-
-type Download struct {
-	Id   string `gorethink:"id,omitempty"`
-	Name string `gorethink:"name"`
-	Date string `gorethink:"date"`
-}
-
-type Assignment struct {
-	Id   string `gorethink:"id,omitempty"`
-	Name string `gorethink:"name"`
-	Date string `gorethink:"date"`
+    return course, nil
 }

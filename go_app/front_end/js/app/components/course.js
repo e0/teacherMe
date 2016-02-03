@@ -14,7 +14,7 @@ define(function(require) {
 
       m.request({
         method: "GET",
-        url: "coursesData/" + courseID + ".json"
+        url: "api/course/" + courseID
       }).then(function(courseData) {
         var course = new Course(courseData);
 
