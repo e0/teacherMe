@@ -1,9 +1,12 @@
 define(function(require) {
   var m = require('lib/mithril');
-  var CoursePage = require('app/components/course');
+  var CourseAllCtrl = require('app/components/course/all');
+  var CourseViewCtrl = require('app/components/course/view');
+  var CourseNewCtrl = require('app/components/course/new');
 
-
-  m.route(document, "/course/1", {
-    "/course/:courseID": CoursePage
+  m.route(document, "/", {
+    "/": CourseAllCtrl,
+    "/course/new": CourseNewCtrl,
+    "/course/:courseId": CourseViewCtrl
   });
 });

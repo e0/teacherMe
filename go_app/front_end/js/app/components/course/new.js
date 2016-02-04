@@ -4,9 +4,9 @@ define(function(require) {
   var Download = require('app/models/download');
   var Assignment = require('app/models/assignment');
   var MixinLayout = require('app/views/layout')
-  var CourseBody = require('app/views/course');
+  var CourseBody = require('app/views/course/new');
 
-  var CoursePage = {
+  return {
     controller: function() {
       var courseID = m.route.param("courseID");
       var ctrl = this;
@@ -40,6 +40,4 @@ define(function(require) {
       return MixinLayout(CourseBody, ctrl.course());
     }
   };
-
-  return CoursePage;
 });
