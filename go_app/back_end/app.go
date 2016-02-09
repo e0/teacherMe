@@ -36,18 +36,18 @@ func main() {
 			data := c.Query("courseData")
 			courseData := map[string]interface{}{}
 			json.Unmarshal([]byte(data), &courseData)
-			courseId := createCourse(courseData)
+			courseID := createCourse(courseData)
 
-			if courseId == "" {
+			if courseID == "" {
 				c.JSON(400, gin.H{"error": "Course creation failed."})
 			} else {
-				c.JSON(200, gin.H{"courseId": courseId})
+				c.JSON(200, gin.H{"courseID": courseID})
 			}
 		})
 
-		api.GET("/course/:courseId", func(c *gin.Context) {
-			courseId := c.Param("courseId")
-			course, err := fetchCourse(courseId)
+		api.GET("/course/:courseID", func(c *gin.Context) {
+			courseID := c.Param("courseID")
+			course, err := fetchCourse(courseID)
 
 			if err != nil {
 				fmt.Println(err)
@@ -82,10 +82,10 @@ func createCourse(courseData map[string]interface{}) string {
 	return result.GeneratedKeys[0]
 }
 
-func fetchCourse(courseId string) (model.Course, error) {
+func fetchCourse(courseID string) (model.Course, error) {
 	var course model.Course
 
-	cursor, err := r.Table("courses").Get(courseId).Run(session)
+	cursor, err := r.Table("courses").Get(courseID).Run(session)
 
 	if err != nil {
 		fmt.Println(err)

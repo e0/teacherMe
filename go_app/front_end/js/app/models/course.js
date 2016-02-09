@@ -21,8 +21,8 @@ define(function(require) {
       method: "POST",
       url: "api/course_create",
       courseData: data
-    }).then(function(courseId) {
-      console.log(courseId)
+    }).then(function(courseID) {
+      console.log(courseID)
     });
   };
 
@@ -47,10 +47,10 @@ define(function(require) {
     return course;
   }
 
-  Course.fetch = function(courseId, callback) {
+  Course.fetch = function(courseID, callback) {
     m.request({
       method: "GET",
-      url: "api/course/" + courseId
+      url: "api/course/" + courseID
     }).then(function(courseData) {
       var course = parseCourse(courseData);
       callback(course);

@@ -5,10 +5,10 @@ define(function(require) {
 
   return {
     controller: function() {
-      var courseId = m.route.param("courseId");
+      var courseID = m.route.param("courseID");
       this.course = m.prop(new Course());
       var ctrl = this;
-      Course.fetch(courseId, function(c) {
+      Course.fetch(courseID, function(c) {
         ctrl.course = m.prop(c);
       });
     },

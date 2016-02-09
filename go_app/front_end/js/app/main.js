@@ -7,6 +7,6 @@ define(function(require) {
   m.route(document, "/", {
     "/": CourseAllCtrl,
     "/course/new": CourseNewCtrl,
-    "/course/:courseId": CourseViewCtrl
+    "/course/:courseID": CourseViewCtrl
   });
 });
