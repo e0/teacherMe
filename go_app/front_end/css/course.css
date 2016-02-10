@@ -1,3 +1,7 @@
+textarea {
+	min-height: 100px;
+}
+
 .course-header {
 	border-bottom: 1px dashed #E1E1E1;
 }

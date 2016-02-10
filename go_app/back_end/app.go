@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 
@@ -32,9 +31,7 @@ func main() {
 
 		api.POST("/course_create", func(c *gin.Context) {
 			data, _ := ioutil.ReadAll(c.Request.Body)
-			courseData := map[string]interface{}{}
-			json.Unmarshal(data, &courseData)
-			courseID := controller.CreateCourse(courseData)
+			courseID := controller.CreateCourse(data)
 
 			if courseID == "" {
 				c.JSON(400, gin.H{"error": "Course creation failed."})

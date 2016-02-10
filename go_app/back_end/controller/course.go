@@ -1,14 +1,21 @@
 package controller
 
 import (
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	r "github.com/dancannon/gorethink"
 	"github.com/e0/teacherMe/go_app/back_end/model"
 )
 
 // CreateCourse inserts a new item in the courses table
-func CreateCourse(courseData map[string]interface{}) string {
+func CreateCourse(data []byte) string {
+	courseData := map[string]interface{}{}
+	json.Unmarshal(data, &courseData)
+	courseDescription, _ := courseData["description"].(string)
+	courseData["description"] = strings.Replace(courseDescription, "\n", "<br />", -1)
+
 	result, err := r.Table("courses").Insert(courseData).RunWrite(session)
 
 	if err != nil {
