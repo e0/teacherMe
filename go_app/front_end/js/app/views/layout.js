@@ -5,14 +5,14 @@ define(function() {
       m("body", [
         m("header", nav),
         m("div.container", body)
-      ]) 
+      ])
     ]);
   };
 
   var head = function() {
     return [
       m("meta[charset='utf-8'"),
-      m("title", "Making your first web page"),
+      m("title", "teacherMe"),
       m("link[rel='stylesheet'][type='text/css'][href='http://fonts.googleapis.com/css?family=Raleway:400,300,600']"),
       m("link[rel='stylesheet'][type='text/css'][href='css/normalize.css']"),
       m("link[rel='stylesheet'][type='text/css'][href='css/skeleton.css']"),

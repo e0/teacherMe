@@ -16,13 +16,18 @@ define(function(require) {
     this.studentsCount = m.prop(data.studentsCount || 0);
   };
 
-  Course.create = function(data) {
+  Course.create = function(course, callback) {
+    var courseData = {
+      title: course.title(),
+      description: course.description()
+    };
+
     m.request({
       method: "POST",
       url: "api/course_create",
-      courseData: data
-    }).then(function(courseID) {
-      console.log(courseID)
+      data: courseData
+    }).then(function(content) {
+      callback(content.courseID);
     });
   };
 

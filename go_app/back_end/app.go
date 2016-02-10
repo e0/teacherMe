@@ -3,27 +3,25 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 
-	r "github.com/dancannon/gorethink"
+	"github.com/e0/teacherMe/go_app/back_end/controller"
 	"github.com/e0/teacherMe/go_app/back_end/helper"
-	"github.com/e0/teacherMe/go_app/back_end/model"
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
-var session *r.Session
-
 func main() {
-	connectToDB()
+	controller.SetSession()
 
-	r := gin.Default()
+	router := gin.Default()
 
-	r.Use(static.Serve("/", static.LocalFile("../front_end/", true)))
+	router.Use(static.Serve("/", static.LocalFile("../front_end/", true)))
 
-	api := r.Group("/api")
+	api := router.Group("/api")
 	{
 		api.GET("/courses", func(c *gin.Context) {
-			courses, err := fetchAllCourses()
+			courses, err := controller.FetchAllCourses()
 
 			if err != nil {
 				fmt.Println(err)
@@ -33,10 +31,10 @@ func main() {
 		})
 
 		api.POST("/course_create", func(c *gin.Context) {
-			data := c.Query("courseData")
+			data, _ := ioutil.ReadAll(c.Request.Body)
 			courseData := map[string]interface{}{}
-			json.Unmarshal([]byte(data), &courseData)
-			courseID := createCourse(courseData)
+			json.Unmarshal(data, &courseData)
+			courseID := controller.CreateCourse(courseData)
 
 			if courseID == "" {
 				c.JSON(400, gin.H{"error": "Course creation failed."})
@@ -47,7 +45,7 @@ func main() {
 
 		api.GET("/course/:courseID", func(c *gin.Context) {
 			courseID := c.Param("courseID")
-			course, err := fetchCourse(courseID)
+			course, err := controller.FetchCourse(courseID)
 
 			if err != nil {
 				fmt.Println(err)
@@ -57,62 +55,5 @@ func main() {
 		})
 	}
 
-	r.Run(":8081")
-}
-
-func connectToDB() {
-	var err error
-	session, err = r.Connect(r.ConnectOpts{
-		Address:  "localhost:28015",
-		Database: "teacherMe",
-	})
-
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-}
-
-func createCourse(courseData map[string]interface{}) string {
-	result, err := r.Table("courses").Insert(courseData).RunWrite(session)
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-
-	return result.GeneratedKeys[0]
-}
-
-func fetchCourse(courseID string) (model.Course, error) {
-	var course model.Course
-
-	cursor, err := r.Table("courses").Get(courseID).Run(session)
-
-	if err != nil {
-		fmt.Println(err)
-		return course, err
-	}
-
-	cursor.One(&course)
-	cursor.Close()
-
-	return course, nil
-}
-
-func fetchAllCourses() ([]model.Course, error) {
-	var courses []model.Course
-
-	rows, err := r.Table("courses").Run(session)
-
-	if err != nil {
-		fmt.Println(err)
-		return courses, err
-	}
-
-	err2 := rows.All(&courses)
-	if err2 != nil {
-		fmt.Println(err2)
-		return courses, err2
-	}
-
-	return courses, nil
+	router.Run(":8081")
 }
