@@ -11,7 +11,7 @@ define(function() {
 
   var head = function() {
     return [
-      m("meta[charset='utf-8'"),
+      m("meta[charset='utf-8']"),
       m("title", "teacherMe"),
       m("link[rel='stylesheet'][type='text/css'][href='http://fonts.googleapis.com/css?family=Raleway:400,300,600']"),
       m("link[rel='stylesheet'][type='text/css'][href='css/normalize.css']"),

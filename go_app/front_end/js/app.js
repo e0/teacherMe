@@ -1,6 +1,6 @@
 requirejs.config({
   baseUrl: 'js',
-  path: {
+  paths: {
     app: 'app'
   }
 });
