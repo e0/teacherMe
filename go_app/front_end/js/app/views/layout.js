@@ -21,14 +21,27 @@ define(function() {
     ];
   };
 
+  function logOut() {
+    localStorage.removeItem('id_token');
+    m.route("/");
+  }
+
   var nav = function() {
+    var logButton;
+    
+    if (localStorage.getItem('id_token') == null) {
+      logButton = m("a.button.button-green[href='?/login']", "Log in");
+    } else {
+      logButton = m("a.button", { onclick: logOut }, "Log out");
+    }
+
     return m("div.container", [
       m("span#logo.two.columns", "Logo"),
       m("nav.ten.columns", [
         m("ul", [
-          m("li", [m("a[href='#']", "Courses")]),
+          m("li", [m("a[href='?/courses']", "Courses")]),
           m("li", [m("a[href='#']", "Help")]),
-          m("li", [m("a.button.button-green[href='#']", "Log in")])
+          m("li", [logButton])
         ])
       ])
     ]);
