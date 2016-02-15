@@ -24,8 +24,11 @@ define(function(require) {
 
     m.request({
       method: "POST",
-      url: "api/course_create",
-      data: courseData
+      url: "api/private/course_create",
+      data: courseData,
+      config: function(xhr) {
+        xhr.setRequestHeader('Authorization', "Bearer " + localStorage.getItem('id_token'))
+      }
     }).then(function(content) {
       callback(content.courseID);
     });
@@ -55,7 +58,7 @@ define(function(require) {
   Course.fetch = function(courseID, callback) {
     m.request({
       method: "GET",
-      url: "api/course/" + courseID
+      url: "api/public/course/" + courseID
     }).then(function(courseData) {
       var course = parseCourse(courseData);
       callback(course);
@@ -65,7 +68,7 @@ define(function(require) {
   Course.fetchAll = function(callback) {
     m.request({
       method: "GET",
-      url: "api/courses"
+      url: "api/public/courses"
     }).then(function(coursesData) {
       var courses = coursesData.map(function(courseData) { return parseCourse(courseData); });
       callback(courses);
