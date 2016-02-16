@@ -14,6 +14,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var configFile map[string]string
+
 func main() {
 	controller.SetSession()
 
@@ -39,10 +41,15 @@ func main() {
 		data, _ := ioutil.ReadAll(c.Request.Body)
 		courseID := controller.CreateCourse(data)
 
-		if courseID == "" {
-			c.JSON(400, gin.H{"error": "Course creation failed."})
-		} else {
+		authToken := c.Request.Header.Get("Authorization")
+		tokenInfoURL := configFile["Auth0BaseURL"] + "tokeninfo"
+		userID := controller.GetUserID(authToken, tokenInfoURL)
+		updateUserURL := configFile["Auth0BaseURL"] + "api/v2/users/" + userID
+
+		if controller.UpdateUser(userID, courseID, updateUserURL, authToken) == 200 {
 			c.JSON(200, gin.H{"courseID": courseID})
+		} else {
+			c.JSON(400, gin.H{"error": "Course creation failed."})
 		}
 	})
 
@@ -63,8 +70,8 @@ func main() {
 func getDecodedSecret() string {
 	file, _ := os.Open("config.json")
 	decoder := json.NewDecoder(file)
-	configuration := map[string]string{}
-	decoder.Decode(&configuration)
-	decodedSecret, _ := base64.URLEncoding.DecodeString(configuration["Auth0Secret"])
+	configFile = map[string]string{}
+	decoder.Decode(&configFile)
+	decodedSecret, _ := base64.URLEncoding.DecodeString(configFile["Auth0Secret"])
 	return string(decodedSecret)
 }

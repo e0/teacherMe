@@ -1,3 +1,4 @@
 {
-  "Auth0Secret": ""
+  "Auth0Secret": "",
+  "Auth0BaseURL": ""
 }
