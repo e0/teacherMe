@@ -40,13 +40,9 @@ func main() {
 	privateAPI.POST("/course_create", func(c *gin.Context) {
 		data, _ := ioutil.ReadAll(c.Request.Body)
 		courseID := controller.CreateCourse(data)
-
 		authToken := c.Request.Header.Get("Authorization")
-		tokenInfoURL := configFile["Auth0BaseURL"] + "tokeninfo"
-		userID := controller.GetUserID(authToken, tokenInfoURL)
-		updateUserURL := configFile["Auth0BaseURL"] + "api/v2/users/" + userID
 
-		if controller.UpdateUser(userID, courseID, updateUserURL, authToken) == 200 {
+		if controller.UpdateUser(courseID, configFile["Auth0BaseURL"], authToken) == 200 {
 			c.JSON(200, gin.H{"courseID": courseID})
 		} else {
 			c.JSON(400, gin.H{"error": "Course creation failed."})
