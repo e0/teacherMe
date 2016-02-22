@@ -26,6 +26,22 @@ func CreateCourse(data []byte) string {
 	return result.GeneratedKeys[0]
 }
 
+// UpdateCourse updates an existing item in the courses table
+func UpdateCourse(data []byte) string {
+	courseData := map[string]interface{}{}
+	json.Unmarshal(data, &courseData)
+	courseDescription, _ := courseData["description"].(string)
+	courseData["description"] = strings.Replace(courseDescription, "\n", "<br />", -1)
+
+	if _, err := r.Table("courses").Get(courseData["id"]).Update(courseData).RunWrite(session); err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	courseID, _ := courseData["id"].(string)
+	return courseID
+}
+
 // FetchCourse returns an item from the courses table
 func FetchCourse(courseID string) (model.Course, error) {
 	var course model.Course

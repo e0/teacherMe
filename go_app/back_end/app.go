@@ -49,6 +49,17 @@ func main() {
 		}
 	})
 
+	privateAPI.POST("/course_update", func(c *gin.Context) {
+		data, _ := ioutil.ReadAll(c.Request.Body)
+		courseID := controller.UpdateCourse(data)
+
+		if courseID != "" {
+			c.JSON(200, gin.H{"courseID": courseID})
+		} else {
+			c.JSON(400, gin.H{"error": "Course update failed."})
+		}
+	})
+
 	publicAPI.GET("/course/:courseID", func(c *gin.Context) {
 		courseID := c.Param("courseID")
 		course, err := controller.FetchCourse(courseID)
